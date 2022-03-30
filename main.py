@@ -1,4 +1,5 @@
 import cipher_tools
+print("hello world")
 
 def encrypt(raw_text, decrypted_key, dev_mode = False):
     # Individualise the keys sub-groups
