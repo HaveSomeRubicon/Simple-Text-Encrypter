@@ -1,5 +1,4 @@
 import random
-print("Begun")
 
 def encrypt(password):
     output = ""
