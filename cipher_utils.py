@@ -45,18 +45,38 @@ def make_cipher(length=4):
     return cipher
 
 
-def shrinkify_cipher(cipher):
+def simplify_cipher(cipher):
     main_key_raw = cipher[0]
-    salt_raw = cipher[1]
+    spices_raw = cipher[1]
     length = cipher[2]
-    output = length + ""
 
-    # Append main keys values to output
+    # main_key_raw -> string
+    main_key_string = ""
     for item in main_key_raw:
-        output = output + item
+        main_key_string += item
+    
+    # main_key_string -> hex
+    main_key_hex_list = []
+    for char in main_key_string:
+        char_int = chars.index(char)
+        char_hex = (f"{char_int:#0{5}x}"[2:]) # copied from https://stackoverflow.com/a/12638477
+        main_key_hex_list.append(char_hex)
+    main_key_hex = ':'.join(main_key_hex_list)
         
-    
-    
+    # spice -> string
+    spice_string = ""
+    for item in spices_raw:
+        spice_string += item
 
-haxed = shrinkify_cipher(make_cipher())
-print(haxed)
+    # spice_string -> hex
+    spice_hex_list = []
+    for char in spice_string:
+        char_int = chars.index(char)
+        char_hex = (f"{char_int:#0{5}x}"[2:]) # copied from https://stackoverflow.com/a/12638477
+        spice_hex_list.append(char_hex)
+    spice_hex = ":".join(spice_hex_list)
+    
+    return f"{main_key_hex};{spice_hex};{length}"
+
+def unsimplify_cipher(cipher):
+    pass
