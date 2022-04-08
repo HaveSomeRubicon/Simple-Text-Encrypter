@@ -11,6 +11,7 @@
 # ╚╝░╚╩╝╚╝╚╝╚══╩═══╩══╩╩╩╩══╩╝╚═╩══╩══╩╩══╩══╩╝╚╩╝░
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 import random
+from textwrap import wrap as group_chars
 chars = [
     item for item in """`1234567890-=~!@#$%^&*()_+qwertyuiop[]\QWERTYUIOP{}|asdfghjkl;'ASDFGHJKL:"zxcvbnm,./ZXCVBNM<>?äëïöüÿÄËÏÖÜŸáćéíńóśúýźÁĆÉÍŃÓŚÚÝŹőűŐŰàèìòùÀÈÌÒÙâêîôûÂÊÎÔÛãñõÃÑÕčďěǧňřšťžČĎĚǦŇŘŠŤŽđĐåůÅŮąęĄĘæÆøØçÇłŁßþżŻäëïöüÿÄËÏÖÜŸáćéíńóśúýźÁĆÉÍŃÓŚÚÝŹőűŐŰàèìòùÀÈÌÒÙâêîôûÂÊÎÔÛãñõÃÑÕčďěǧňřšťžČĎĚǦŇŘŠŤŽđĐåůÅŮąęĄĘæÆøØçÇłŁßþżŻαΑβΒγΓδΔεΕζΖηΗθΘϑικΚλΛμΜνΝξΞοΟπΠρΡσΣςτυΥφΦϕχΧψΨωΩ """]
 chars_no_space = [item for item in chars if not item == " "]
@@ -79,4 +80,41 @@ def simplify_cipher(cipher):
     return f"{main_key_hex};{spice_hex};{length}"
 
 def unsimplify_cipher(cipher):
-    pass
+    length = int(cipher[-1])
+    # Function to find all indexes of a character in a string
+    def find_index(string, char):
+        output = []
+        for char_index, str_char in enumerate(string):
+            if str_char == char:
+                output.append(char_index)
+        return tuple(output)
+    
+    # Find the index of the semi colon in the cipher
+    semicolon_indexes = find_index(cipher, ";")
+    
+    # Extract the main key
+    main_key_hex_list = cipher[:semicolon_indexes[0]].split(":")
+    
+    main_key_int_list = []
+    for each_hex in main_key_hex_list:
+        main_key_int_list.append(int(each_hex, 16))
+    
+    main_key_string = ""
+    for item in main_key_int_list:
+        main_key_string += chars[item]
+    main_key = [main_key_string[i:i+length] for i in range(0, len(main_key_string), length)]
+    
+    # Extract spice
+    spice_hex_list = cipher[semicolon_indexes[0] + 1:semicolon_indexes[1]].split(":")
+    
+    spice_int_list = []
+    for each_hex in spice_hex_list:
+        spice_int_list.append(int(each_hex, 16))
+        
+    spice_string = ""
+    for item in spice_int_list:
+        spice_string += chars[item]
+    spice = [spice_string[i:i+length] for i in range(0, len(spice_string), length)]
+    
+    # return normal cipher
+    return [main_key, spice, length]

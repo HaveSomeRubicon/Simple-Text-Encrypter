@@ -34,5 +34,3 @@ def append_cipher(title, cipher, path="cipher.json", date=today.strftime("%B %d,
     json_file["ciphers"].append(
         {"title": title, "date": date, "cipher": cipher})
     write_json_file(json_file, path)
-
-print(export_json_file())
