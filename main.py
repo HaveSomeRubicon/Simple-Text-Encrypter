@@ -4,6 +4,13 @@ import json_utils
 import cipher_utils
 import os
 
+# Check if cipher.json is empty
+try:
+    with open("cipher.json", "r") as json_file:
+        if json_file.read() == '':
+            json_utils.reset_json()
+except FileNotFoundError:
+    json_utils.reset_json()
 
 def clear(): return os.system("clear")
 
