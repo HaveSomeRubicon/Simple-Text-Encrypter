@@ -12,11 +12,13 @@
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 import json
 from datetime import date
-
+import cipher_utils
 today = date.today()
 
 
-def reset_json(): return write_json_file("""{"ciphers": []}""", "cipher.json")
+def reset_json(path = "cipher.json"):
+    with open(path, "w") as file:
+        file.write('{"ciphers": []}')
 
 
 def export_json_file(path="cipher.json"):
