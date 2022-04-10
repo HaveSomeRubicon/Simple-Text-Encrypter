@@ -21,18 +21,18 @@ def reset_json(path="cipher.json"):
         file.write('{"ciphers": []}')
 
 
-def export_json_file(path="cipher.json"):
+def read_ciphers(path="cipher.json"):
     with open(path, "r") as json_file:
         return json.load(json_file)
 
 
-def write_json_file(file_to_write, destination="cipher.json"):
+def write_to_ciphers(file_to_write, destination="cipher.json"):
     with open(destination, "w") as file:
         json.dump(file_to_write, file)
 
 
-def append_cipher(title, cipher, path="cipher.json", date=today.strftime("%B %d, %Y")):
-    json_file = export_json_file(path)
+def append_cipher_to_ciphers(title, cipher, path="cipher.json", date=today.strftime("%B %d, %Y")):
+    json_file = read_ciphers(path)
     json_file["ciphers"].append(
         {"title": title, "date": date, "cipher": cipher})
-    write_json_file(json_file, path)
+    write_to_ciphers(json_file, path)

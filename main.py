@@ -1,6 +1,6 @@
 import time
 import encrypter
-import json_utils
+import cipher_storage
 import cipher_utils
 import os
 import json
@@ -10,9 +10,9 @@ import subprocess
 try:
     with open("cipher.json", "r") as json_file:
         if json_file.read() == '':
-            json_utils.reset_json()
+            cipher_storage.reset_json()
 except FileNotFoundError:
-    json_utils.reset_json()
+    cipher_storage.reset_json()
 
 
 def clear(): return subprocess.run(['cls' if os.name == 'nt' else 'clear'])
@@ -36,7 +36,7 @@ def menu():
     def key_selector(title="Select a key: "):
         clear()
         sprint(title)
-        ciphers = json_utils.export_json_file()['ciphers']
+        ciphers = cipher_storage.read_ciphers()['ciphers']
         time.sleep(0.2)
         if ciphers == []:
             print(
@@ -130,7 +130,7 @@ def menu():
             if title_input == '':
                 sprint("Please give you key a name!")
                 clear()
-        json_utils.append_cipher(
+        cipher_storage.append_cipher_to_ciphers(
             title_input, cipher_utils.simplify_cipher(cipher_utils.make_cipher()))
         sprint(
             "New key was succesfully made! You may now use this key to encrypt and decrypt text!")
@@ -138,7 +138,7 @@ def menu():
     elif menu_choice == 'K':
         clear()
         sprint("Your keys:")
-        ciphers = json_utils.export_json_file()['ciphers']
+        ciphers = cipher_storage.read_ciphers()['ciphers']
         time.sleep(0.2)
         if ciphers == []:
             print(
@@ -165,15 +165,15 @@ def menu():
             menu()
             return ''
         try:
-            json_utils.append_cipher(json_utils.export_json_file('import.txt')['title'], json_utils.export_json_file(
-                'import.txt')['cipher'], date=json_utils.export_json_file('import.txt')['date'])  # Add the cipher from import.txt
+            cipher_storage.append_cipher_to_ciphers(cipher_storage.read_ciphers('import.txt')['title'], cipher_storage.read_ciphers(
+                'import.txt')['cipher'], date=cipher_storage.read_ciphers('import.txt')['date'])  # Add the cipher from import.txt
             sprint("The key was succesfully added!")
         except:
             sprint("The import.txt file was found but the program was not able to read it. Make sure it hasn't been tampered with.")
         enter_menu()
     elif menu_choice == 'X':
         export_key = key_selector("What key would you like to export?: ")
-        json_utils.write_json_file(export_key, "export.txt")
+        cipher_storage.write_to_ciphers(export_key, "export.txt")
         sprint("The key has been exported to the export.txt file.")
         enter_menu()
     elif menu_choice == 'F':
@@ -192,9 +192,9 @@ def menu():
         else:
             menu()
             return ''
-        json_file = json_utils.export_json_file()
+        json_file = cipher_storage.read_ciphers()
         json_file['ciphers'].remove(deleted_key)
-        json_utils.write_json_file(json_file)
+        cipher_storage.write_to_ciphers(json_file)
         sprint("The key was succesfully deleted.")
         enter_menu()
     elif menu_choice == 'Q':
