@@ -16,7 +16,7 @@ import cipher_utils
 today = date.today()
 
 
-def reset_json(path = "cipher.json"):
+def reset_json(path="cipher.json"):
     with open(path, "w") as file:
         file.write('{"ciphers": []}')
 

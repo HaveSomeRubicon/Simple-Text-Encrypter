@@ -3,6 +3,8 @@ import encrypter
 import json_utils
 import cipher_utils
 import os
+import json
+import subprocess
 
 # Check if cipher.json is empty
 try:
@@ -12,7 +14,8 @@ try:
 except FileNotFoundError:
     json_utils.reset_json()
 
-def clear(): return os.system("clear")
+
+def clear(): return subprocess.run(['cls' if os.name == 'nt' else 'clear'])
 
 
 def sprint(text, speed=0.06, wait=0, end='\n'):
@@ -29,6 +32,7 @@ def enter_menu():
 
 
 def menu():
+    # Key selector function
     def key_selector(title="Select a key: "):
         clear()
         sprint(title)
@@ -49,12 +53,20 @@ def menu():
         key_choice = input(
             f"\nChoose a key(1-{ciphers.index(item) + 1})?: ")
         try:
-            return ciphers[int(key_choice) - 1]
+            if not int(key_choice) < 1:
+                return ciphers[int(key_choice) - 1]
+            else:
+                sprint(
+                    "Oops, that number is not a key! ERROR: Less than lowest index key")
+                enter_menu()
+                return key_selector()
         except:
-            sprint("Oops, that number does not exist!")
+            sprint(
+                "Oops, that number is not a key! ERROR: Greater than highest index key")
             enter_menu()
             return key_selector()
 
+    # Display options
     clear()
     print("""
 ╔═╗╔═╗
@@ -63,49 +75,61 @@ def menu():
 ║║║║║║╔╗╠╣╔╗╗║╚╝║║═╣╔╗╣║║╠╝
 ║║║║║║╔╗║║║║║║║║║║═╣║║║╚╝╠╗
 ╚╝╚╝╚╩╝╚╩╩╝╚╝╚╩╩╩══╩╝╚╩══╩╝""")
-    time.sleep(0.2)
+    time.sleep(0.1)
     print("Press E and hit <enter> to encrypt text")
-    time.sleep(0.2)
+    time.sleep(0.1)
     print("Press D and hit <enter> to decrypt text")
-    time.sleep(0.2)
+    time.sleep(0.1)
     print("Press M and hit <enter> to make a new key")
-    time.sleep(0.2)
+    time.sleep(0.1)
     print("Press K and hit <enter> to list all your keys")
-    time.sleep(0.2)
+    time.sleep(0.1)
     print("Press I and hit <enter> to import a key")
-    time.sleep(0.2)
+    time.sleep(0.1)
     print("Press X and hit <enter> to export a key")
-    time.sleep(0.2)
+    time.sleep(0.1)
     print("Press F and hit <enter> to delete a key")
-    time.sleep(0.2)
+    time.sleep(0.1)
     print("Press Q and hit <enter> to quit program")
-    time.sleep(0.2)
+    time.sleep(0.1)
     print('')
 
-    menu_choice = input(
-        "Enter the letter that corresponds with the option of your choice: ")[0].upper()
+    # Take input
+    try:
+        menu_choice = input(
+            "Enter the letter that corresponds with the option of your choice: ")[0].upper()
+    except IndexError:
+        menu()
+        return ''
     if menu_choice == 'E':
         clear()
+        # Let the user choose a key and convert it to raw format
         cipher = cipher_utils.unsimplify_cipher(key_selector()['cipher'])
         text_input = input("What text would you like to encrypt?:\n")
         clear()
         sprint("Your encrypted text: \n")
-        sprint(encrypter.encrypt(text_input, cipher), speed=0.01)
+        sprint(encrypter.encrypt(text_input, cipher), speed=0.01)  # Encrypt
         print('')
         enter_menu()
     elif menu_choice == 'D':
         clear()
+        # Let the user choose a key and convert it to raw format
         cipher = cipher_utils.unsimplify_cipher(key_selector()['cipher'])
         text_input = input("What text would you like to decrypt?:\n")
         clear()
         sprint("Your decrypted text: \n")
-        sprint(encrypter.decrypt(text_input, cipher), speed=0.01)
+        sprint(encrypter.decrypt(text_input, cipher), speed=0.01)  # Decrypt
         print('')
         enter_menu()
     elif menu_choice == 'M':
         clear()
-        sprint("What would you like to call this new key?: ", end='')
-        title_input = input()
+        title_input = ''
+        while title_input == '':
+            sprint("What would you like to call this new key?: ", end='')
+            title_input = input()
+            if title_input == '':
+                sprint("Please give you key a name!")
+                clear()
         json_utils.append_cipher(
             title_input, cipher_utils.simplify_cipher(cipher_utils.make_cipher()))
         sprint(
@@ -131,24 +155,46 @@ def menu():
         print('')
         enter_menu()
     elif menu_choice == 'I':
-        import_key = dict(input("Please copy paste in an exported key. If your exported key is in a file open it and copy paste the contents into this program: "))
-        json_utils.append_cipher(
-            import_key['title'], import_key['cipher'], import_key['date'])
-        print(export_key)
+        clear()
+        sprint("Rename the export.txt file to import.txt and place the file in the same folder this script is in and press enter when your done.")
+        enter_menu()
+        if not os.path.isfile('import.txt'):  # Check if an import.txt file exists
+            clear()
+            sprint("The program wasn't able to find a import.txt file. Did you place it in the same folder this script is in?")
+            enter_menu()
+            menu()
+            return ''
+        try:
+            json_utils.append_cipher(json_utils.export_json_file('import.txt')['title'], json_utils.export_json_file(
+                'import.txt')['cipher'], date=json_utils.export_json_file('import.txt')['date'])  # Add the cipher from import.txt
+            sprint("The key was succesfully added!")
+        except:
+            sprint("The import.txt file was found but the program was not able to read it. Make sure it hasn't been tampered with.")
+        enter_menu()
     elif menu_choice == 'X':
         export_key = key_selector("What key would you like to export?: ")
-        with open("export.txt", "w") as export_file:
-            export_file.write(str(export_key))
-        sprint('The key has been exported to the export.txt file.')
+        json_utils.write_json_file(export_key, "export.txt")
+        sprint("The key has been exported to the export.txt file.")
         enter_menu()
     elif menu_choice == 'F':
         deleted_key = key_selector("What key would you like to delete: ")
-        exported_keys = json_utils.export_json_file()
-        input(f"PRESS <enter> IF YOU ARE SURE ABOUT DELETING {deleted_key['title']}(1):")
-        input(f"PRESS <enter> IF YOU ARE SURE ABOUT DELETING {deleted_key['title']}(2):")
-        input(f"PRESS <enter> IF YOU ARE SURE ABOUT DELETING {deleted_key['title']}(3):")
-        exported_keys['ciphers'].remove(deleted_key)
-        json_utils.write_json_file(exported_keys)
+
+        if input(f"PRESS <enter> IF YOU ARE SURE ABOUT DELETING {deleted_key['title']}(1), PRESS Q AND HIT <enter> TO QUIT:") == '':
+            if input(f"PRESS <enter> IF YOU ARE SURE ABOUT DELETING {deleted_key['title']}(2), PRESS Q AND HIT <enter> TO QUIT:") == '':
+                if input(f"PRESS <enter> IF YOU ARE SURE ABOUT DELETING {deleted_key['title']}(3), PRESS Q AND HIT <enter> TO QUIT:") == '':
+                    pass
+                else:
+                    menu()
+                    return ''
+            else:
+                menu()
+                return ''
+        else:
+            menu()
+            return ''
+        json_file = json_utils.export_json_file()
+        json_file['ciphers'].remove(deleted_key)
+        json_utils.write_json_file(json_file)
         sprint("The key was succesfully deleted.")
         enter_menu()
     elif menu_choice == 'Q':
