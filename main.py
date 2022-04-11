@@ -1,7 +1,7 @@
 import time
-import encrypter
-import cipher_storage
-import cipher_utils
+import encryption_tools
+import storage_manager
+import cipher_tools
 import os
 import json
 import subprocess
@@ -10,10 +10,9 @@ import subprocess
 try:
     with open("cipher.json", "r") as json_file:
         if json_file.read() == '':
-            cipher_storage.reset_json()
+            storage_manager.reset_json()
 except FileNotFoundError:
-    cipher_storage.reset_json()
-
+    storage_manager.reset_json()
 
 def clear(): return subprocess.run(['cls' if os.name == 'nt' else 'clear'])
 
@@ -36,7 +35,7 @@ def menu():
     def key_selector(title="Select a key: "):
         clear()
         sprint(title)
-        ciphers = cipher_storage.read_ciphers()['ciphers']
+        ciphers = storage_manager.read_ciphers()['ciphers']
         time.sleep(0.2)
         if ciphers == []:
             print(
@@ -104,21 +103,21 @@ def menu():
     if menu_choice == 'E':
         clear()
         # Let the user choose a key and convert it to raw format
-        cipher = cipher_utils.unsimplify_cipher(key_selector()['cipher'])
+        cipher = cipher.unsimplify_cipher(key_selector()['cipher'])
         text_input = input("What text would you like to encrypt?:\n")
         clear()
         sprint("Your encrypted text: \n")
-        sprint(encrypter.encrypt(text_input, cipher), speed=0.01)  # Encrypt
+        sprint(encryption_tools.encrypt(text_input, cipher), speed=0.01)  # Encrypt
         print('')
         enter_menu()
     elif menu_choice == 'D':
         clear()
         # Let the user choose a key and convert it to raw format
-        cipher = cipher_utils.unsimplify_cipher(key_selector()['cipher'])
+        cipher = cipher.unsimplify_cipher(key_selector()['cipher'])
         text_input = input("What text would you like to decrypt?:\n")
         clear()
         sprint("Your decrypted text: \n")
-        sprint(encrypter.decrypt(text_input, cipher), speed=0.01)  # Decrypt
+        sprint(encryption_tools.decrypt(text_input, cipher), speed=0.01)  # Decrypt
         print('')
         enter_menu()
     elif menu_choice == 'M':
@@ -130,15 +129,15 @@ def menu():
             if title_input == '':
                 sprint("Please give you key a name!")
                 clear()
-        cipher_storage.append_cipher_to_ciphers(
-            title_input, cipher_utils.simplify_cipher(cipher_utils.make_cipher()))
+        storage_manager.append_cipher_to_ciphers(
+            title_input, cipher.simplify_cipher(cipher.make_cipher()))
         sprint(
             "New key was succesfully made! You may now use this key to encrypt and decrypt text!")
         enter_menu()
     elif menu_choice == 'K':
         clear()
         sprint("Your keys:")
-        ciphers = cipher_storage.read_ciphers()['ciphers']
+        ciphers = storage_manager.read_ciphers()['ciphers']
         time.sleep(0.2)
         if ciphers == []:
             print(
@@ -165,15 +164,15 @@ def menu():
             menu()
             return ''
         try:
-            cipher_storage.append_cipher_to_ciphers(cipher_storage.read_ciphers('import.txt')['title'], cipher_storage.read_ciphers(
-                'import.txt')['cipher'], date=cipher_storage.read_ciphers('import.txt')['date'])  # Add the cipher from import.txt
+            storage_manager.append_cipher_to_ciphers(storage_manager.read_ciphers('import.txt')['title'], storage_manager.read_ciphers(
+                'import.txt')['cipher'], date=storage_manager.read_ciphers('import.txt')['date'])  # Add the cipher from import.txt
             sprint("The key was succesfully added!")
         except:
             sprint("The import.txt file was found but the program was not able to read it. Make sure it hasn't been tampered with.")
         enter_menu()
     elif menu_choice == 'X':
         export_key = key_selector("What key would you like to export?: ")
-        cipher_storage.write_to_ciphers(export_key, "export.txt")
+        storage_manager.write_to_ciphers(export_key, "export.txt")
         sprint("The key has been exported to the export.txt file.")
         enter_menu()
     elif menu_choice == 'F':
@@ -192,9 +191,9 @@ def menu():
         else:
             menu()
             return ''
-        json_file = cipher_storage.read_ciphers()
+        json_file = storage_manager.read_ciphers()
         json_file['ciphers'].remove(deleted_key)
-        cipher_storage.write_to_ciphers(json_file)
+        storage_manager.write_to_ciphers(json_file)
         sprint("The key was succesfully deleted.")
         enter_menu()
     elif menu_choice == 'Q':
