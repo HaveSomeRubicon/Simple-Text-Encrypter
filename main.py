@@ -9,9 +9,12 @@ import subprocess
 # Run checks to see if json files are empty or dont exist
 storage_manager.run_checks()
 
+
 def clear(): return subprocess.run(['cls' if os.name == 'nt' else 'clear'])
 
 # Define menu functions
+
+
 def sprint(text, speed=0.06, wait=0, end='\n'):
     for each_char in text:
         print(each_char, flush=True, end='')
@@ -97,24 +100,26 @@ def menu():
         return ''
     if menu_choice == 'E':
         clear()
-        selected_cipher = cipher_tools.unsimplify_cipher(key_selector()['cipher']) # selected cipher == the cipher the user chose
-        raw_text = input("What text would you like to encrypt?: ") 
+        selected_cipher = cipher_tools.unsimplify_cipher(
+            key_selector()['cipher'])
+        sprint("What text would you like to encrypt?: ")
+        raw_text = input("")
         encrypted_text = encryption_tools.encrypt(raw_text, selected_cipher)
         clear()
         sprint("Your encrypted text: \n")
         print(encrypted_text, '\n')
+        sprint("If you want to copy it higlight the encrypted text and press CTRL+SHIFT+C(not CTRL+C!!!) to copy it.")
         enter_menu()
-        
     elif menu_choice == 'D':
         clear()
-        # Let the user choose a key and convert it to raw format
-        cipher = cipher_tools.unsimplify_cipher(key_selector()['cipher'])
-        text_input = input("What text would you like to decrypt?:\n")
+        selected_cipher = cipher_tools.unsimplify_cipher(
+            key_selector()['cipher'])
+        decrypted_text = encryption_tools.decrypt(input(
+            "Paste in some text that was encrypted with the same key by pressing CTRL+SHIFT+V(not CTRL+V!!!): "), selected_cipher)
         clear()
         sprint("Your decrypted text: \n")
-        sprint(encryption_tools.decrypt(text_input, cipher), speed=0.01)  # Decrypt
-        print('')
-        enter_menu()
+        sprint(decrypted_text + '\n', speed = 0.01)
+        enter_menu()        
     elif menu_choice == 'M':
         clear()
         title_input = ''
