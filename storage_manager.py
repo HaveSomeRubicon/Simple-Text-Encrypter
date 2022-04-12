@@ -35,7 +35,7 @@ def append_cipher_to_ciphers(title, cipher, path="my_stuff.json", date=today.str
     json_file = read_json(path)
     json_file["ciphers"].append(
         {"title": title, "date": date, "cipher": cipher})
-    write_to_ciphers(json_file, path)
+    write_to_json(json_file, path)
     
     
 # def append_encrypted_text(title, encrypted_text, path = "my_stuff.json"):
