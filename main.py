@@ -6,17 +6,12 @@ import os
 import json
 import subprocess
 
-# Check if cipher.json is empty
-try:
-    with open("cipher.json", "r") as json_file:
-        if json_file.read() == '':
-            storage_manager.reset_json()
-except FileNotFoundError:
-    storage_manager.reset_json()
+# Run checks to see if json files are empty or dont exist
+storage_manager.run_checks()
 
 def clear(): return subprocess.run(['cls' if os.name == 'nt' else 'clear'])
 
-
+# Define menu functions
 def sprint(text, speed=0.06, wait=0, end='\n'):
     for each_char in text:
         print(each_char, flush=True, end='')
@@ -35,7 +30,7 @@ def menu():
     def key_selector(title="Select a key: "):
         clear()
         sprint(title)
-        ciphers = storage_manager.read_ciphers()['ciphers']
+        ciphers = storage_manager.read_json()['ciphers']
         time.sleep(0.2)
         if ciphers == []:
             print(
@@ -103,7 +98,7 @@ def menu():
     if menu_choice == 'E':
         clear()
         # Let the user choose a key and convert it to raw format
-        cipher = cipher.unsimplify_cipher(key_selector()['cipher'])
+        cipher = cipher_tools.unsimplify_cipher(key_selector()['cipher'])
         text_input = input("What text would you like to encrypt?:\n")
         clear()
         sprint("Your encrypted text: \n")
@@ -113,7 +108,7 @@ def menu():
     elif menu_choice == 'D':
         clear()
         # Let the user choose a key and convert it to raw format
-        cipher = cipher.unsimplify_cipher(key_selector()['cipher'])
+        cipher = cipher_tools.unsimplify_cipher(key_selector()['cipher'])
         text_input = input("What text would you like to decrypt?:\n")
         clear()
         sprint("Your decrypted text: \n")
@@ -130,14 +125,14 @@ def menu():
                 sprint("Please give you key a name!")
                 clear()
         storage_manager.append_cipher_to_ciphers(
-            title_input, cipher.simplify_cipher(cipher.make_cipher()))
+            title_input, cipher_tools.simplify_cipher(cipher_tools.make_cipher()))
         sprint(
             "New key was succesfully made! You may now use this key to encrypt and decrypt text!")
         enter_menu()
     elif menu_choice == 'K':
         clear()
         sprint("Your keys:")
-        ciphers = storage_manager.read_ciphers()['ciphers']
+        ciphers = storage_manager.read_json()['ciphers']
         time.sleep(0.2)
         if ciphers == []:
             print(
@@ -164,15 +159,15 @@ def menu():
             menu()
             return ''
         try:
-            storage_manager.append_cipher_to_ciphers(storage_manager.read_ciphers('import.txt')['title'], storage_manager.read_ciphers(
-                'import.txt')['cipher'], date=storage_manager.read_ciphers('import.txt')['date'])  # Add the cipher from import.txt
+            storage_manager.append_cipher_to_ciphers(storage_manager.read_json('import.txt')['title'], storage_manager.read_json(
+                'import.txt')['cipher'], date=storage_manager.read_json('import.txt')['date'])  # Add the cipher from import.txt
             sprint("The key was succesfully added!")
         except:
             sprint("The import.txt file was found but the program was not able to read it. Make sure it hasn't been tampered with.")
         enter_menu()
     elif menu_choice == 'X':
         export_key = key_selector("What key would you like to export?: ")
-        storage_manager.write_to_ciphers(export_key, "export.txt")
+        storage_manager.write_to_json(export_key, "export.txt")
         sprint("The key has been exported to the export.txt file.")
         enter_menu()
     elif menu_choice == 'F':
@@ -191,14 +186,17 @@ def menu():
         else:
             menu()
             return ''
-        json_file = storage_manager.read_ciphers()
+        json_file = storage_manager.read_json()
         json_file['ciphers'].remove(deleted_key)
-        storage_manager.write_to_ciphers(json_file)
+        storage_manager.write_to_json(json_file)
         sprint("The key was succesfully deleted.")
         enter_menu()
     elif menu_choice == 'Q':
         clear()
         quit()
+    else:
+        sprint("That option does not exist!")
+        enter_menu()
     menu()
 
 
