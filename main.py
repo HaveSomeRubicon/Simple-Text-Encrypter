@@ -124,7 +124,7 @@ def menu():
             if title_input == '':
                 sprint("Please give you key a name!")
                 clear()
-        storage_manager.append_cipher_to_ciphers(
+        storage_manager.append_cipher(
             title_input, cipher_tools.simplify_cipher(cipher_tools.make_cipher()))
         sprint(
             "New key was succesfully made! You may now use this key to encrypt and decrypt text!")
@@ -159,7 +159,7 @@ def menu():
             menu()
             return ''
         try:
-            storage_manager.append_cipher_to_ciphers(storage_manager.read_json('import.txt')['title'], storage_manager.read_json(
+            storage_manager.append_cipher(storage_manager.read_json('import.txt')['title'], storage_manager.read_json(
                 'import.txt')['cipher'], date=storage_manager.read_json('import.txt')['date'])  # Add the cipher from import.txt
             sprint("The key was succesfully added!")
         except:
