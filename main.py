@@ -97,14 +97,14 @@ def menu():
         return ''
     if menu_choice == 'E':
         clear()
-        # Let the user choose a key and convert it to raw format
-        cipher = cipher_tools.unsimplify_cipher(key_selector()['cipher'])
-        text_input = input("What text would you like to encrypt?:\n")
+        selected_cipher = cipher_tools.unsimplify_cipher(key_selector()['cipher']) # selected cipher == the cipher the user chose
+        raw_text = input("What text would you like to encrypt?: ") 
+        encrypted_text = encryption_tools.encrypt(raw_text, selected_cipher)
         clear()
         sprint("Your encrypted text: \n")
-        sprint(encryption_tools.encrypt(text_input, cipher), speed=0.01)  # Encrypt
-        print('')
+        print(encrypted_text, '\n')
         enter_menu()
+        
     elif menu_choice == 'D':
         clear()
         # Let the user choose a key and convert it to raw format
