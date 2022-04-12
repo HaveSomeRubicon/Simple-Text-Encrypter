@@ -23,9 +23,13 @@ def sprint(text, speed=0.06, wait=0, end='\n'):
     print('', end=end)
 
 
+def sinput(text, speed=0.06, wait=0, end='\n'):
+    sprint(text, speed, wait, end='')
+    return input("")
+
+
 def enter_menu():
-    sprint("Press <enter> to continue", end='')
-    input("")
+    sinput("Press <enter> to continue")
 
 
 def menu():
@@ -47,7 +51,7 @@ def menu():
             time.sleep(0.1)
             if item == ciphers[-1]:
                 last_index = ciphers.index(item)
-        key_choice = input(
+        key_choice = sinput(
             f"\nChoose a key(1-{ciphers.index(item) + 1})?: ")
         try:
             if not int(key_choice) < 1:
@@ -102,24 +106,23 @@ def menu():
         clear()
         selected_cipher = cipher_tools.unsimplify_cipher(
             key_selector()['cipher'])
-        sprint("What text would you like to encrypt?: ")
-        raw_text = input("")
+        raw_text = sinput("What text would you like to encrypt?: ")
         encrypted_text = encryption_tools.encrypt(raw_text, selected_cipher)
         clear()
         sprint("Your encrypted text: \n")
-        print(encrypted_text, '\n')
-        sprint("If you want to copy it higlight the encrypted text and press CTRL+SHIFT+C(not CTRL+C!!!) to copy it.")
+        sprint(encrypted_text + '\n', speed=0.01)
+        sprint("If you want to copy it higlight the encrypted text and press CTRL+SHIFT+C(not CTRL+C!!!) to copy it.", speed=0.05)
         enter_menu()
     elif menu_choice == 'D':
         clear()
         selected_cipher = cipher_tools.unsimplify_cipher(
             key_selector()['cipher'])
-        decrypted_text = encryption_tools.decrypt(input(
-            "Paste in some text that was encrypted with the same key by pressing CTRL+SHIFT+V(not CTRL+V!!!): "), selected_cipher)
+        decrypted_text = encryption_tools.decrypt(sinput(
+            "Paste in some text that was encrypted with the same key by pressing CTRL+SHIFT+V(not CTRL+V!!!): ", speed=0.05), selected_cipher)
         clear()
         sprint("Your decrypted text: \n")
-        sprint(decrypted_text + '\n', speed = 0.01)
-        enter_menu()        
+        sprint(decrypted_text + '\n', speed=0.01)
+        enter_menu()
     elif menu_choice == 'M':
         clear()
         title_input = ''
