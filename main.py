@@ -10,9 +10,8 @@ import subprocess
 storage_manager.run_checks()
 
 
-def clear(): return subprocess.run(['cls' if os.name == 'nt' else 'clear'])
-
 # Define menu functions
+def clear(): return subprocess.run(['cls' if os.name == 'nt' else 'clear'])
 
 
 def sprint(text, speed=0.06, wait=0, end='\n'):
@@ -32,7 +31,7 @@ def enter_menu():
     sinput("Press <enter> to continue")
 
 
-def menu():
+def menu(welcome_text=False):
     # Key selector function
     def key_selector(title="Select a key: "):
         clear()
@@ -76,6 +75,13 @@ def menu():
 ║║║║║║╔╗╠╣╔╗╗║╚╝║║═╣╔╗╣║║╠╝
 ║║║║║║╔╗║║║║║║║║║║═╣║║║╚╝╠╗
 ╚╝╚╝╚╩╝╚╩╩╝╚╝╚╩╩╩══╩╝╚╩══╩╝""")
+    if welcome_text:
+        print("""Welcome to Simple-Text-Encrypter V3, this program can take any text 
+and scramble it up into a gibberish message that can be turned back
+into normal text with a special "key" that is stored on your computer. 
+You can share this key with you friends too if you want them to be 
+able to decode your message.""")
+        print("-------------------------------------------------------------------")
     time.sleep(0.1)
     print("Press E and hit <enter> to encrypt text")
     time.sleep(0.1)
@@ -218,8 +224,7 @@ def menu():
 # ░░╚██╔╝░╚██╔╝░███████╗███████╗╚█████╔╝╚█████╔╝██║░╚═╝░██║███████╗██╗██╗██╗
 # ░░░╚═╝░░░╚═╝░░╚══════╝╚══════╝░╚════╝░░╚════╝░╚═╝░░░░░╚═╝╚══════╝╚═╝╚═╝╚═╝""")
 # sprint("Welcome to Text Encrypter V3!", wait=0.2)
-# sprint("""This program can take any text and scramble it up into a gibberish message that can be turned back into normal text with a special "key"
-# that is stored on your computer. You can share this key with you friends too if you want them to be able to decode your message.""", wait=0.2)
+print("""This program can take any text and scramble it up into a gibberish message that can be turned back into normal text with a special "key"that is stored on your computer. You can share this key with you friends too if you want them to be able to decode your message.""")
 # enter_menu()
 # Main menu loop
-menu()
+menu(True)
