@@ -48,7 +48,7 @@ def append_encrypted_text(title, encrypted_text, path="my_stuff.json"):
 def run_checks():
     try:
         with open("my_stuff.json", "r") as json_file:
-            if json_file.read() == '':
+            if json_file.read() == '' or  json_file.read() == 'none':
                 reset_json()
     except FileNotFoundError:
         reset_json()
