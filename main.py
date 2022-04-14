@@ -66,6 +66,12 @@ def menu(welcome_text=False):
             enter_menu()
             return key_selector()
 
+    
+    # Encrypted text selector(WIP)
+    # def encrypted_text_selector(title = "Select a encrypted text: "):
+    #     clear()
+    #     sprint(title)
+        
     # Display options
     clear()
     print("""
@@ -76,11 +82,7 @@ def menu(welcome_text=False):
 ║║║║║║╔╗║║║║║║║║║║═╣║║║╚╝╠╗
 ╚╝╚╝╚╩╝╚╩╩╝╚╝╚╩╩╩══╩╝╚╩══╩╝""")
     if welcome_text:
-        print("""Welcome to Simple-Text-Encrypter V3, this program can take any text 
-and scramble it up into a gibberish message that can be turned back
-into normal text with a special "key" that is stored on your computer. 
-You can share this key with you friends too if you want them to be 
-able to decode your message.""")
+        print("""Welcome to Simple-Text-Encrypter V3, this program can take any text and scramble it up into a gibberish message that can be turned backinto normal text with a special "key" that is stored on your computer. You can share this key with you friends too if you want them to be able to decode your message.""")
         print("-------------------------------------------------------------------")
     time.sleep(0.1)
     print("Press E and hit <enter> to encrypt text")
@@ -112,12 +114,16 @@ able to decode your message.""")
         clear()
         selected_cipher = cipher_tools.unsimplify_cipher(
             key_selector()['cipher'])
-        raw_text = sinput("What text would you like to encrypt?: ")
-        encrypted_text = encryption_tools.encrypt(raw_text, selected_cipher)
+        encrypted_text = encryption_tools.encrypt(
+            sinput("What text would you like to encrypt?: "), selected_cipher)
         clear()
-        sprint("Your encrypted text: \n")
-        sprint(encrypted_text + '\n', speed=0.01)
-        sprint("If you want to copy it higlight the encrypted text and press CTRL+SHIFT+C(not CTRL+C!!!) to copy it.", speed=0.05)
+        sprint("Your encrypted text: \n", wait=0.2)
+        sprint(encrypted_text + '\n', speed=0.01, wait=0.2)
+        sprint("If you want to copy it higlight the encrypted text and press CTRL+SHIFT+C(not CTRL+C!!!) to copy it.", speed=0.05, wait=0.2)
+        if sinput("Would you like to save this encrypted text[Y or N]?: ", wait=0.2).lower() == 'y':
+            storage_manager.append_encrypted_text(sinput(
+                "What would you like to call this encrypted text?: ", wait=0.2), encrypted_text)
+            sprint("Encrypted text was succesfully saved!")
         enter_menu()
     elif menu_choice == 'D':
         clear()
@@ -214,17 +220,4 @@ able to decode your message.""")
     menu()
 
 
-# Welcome screen:
-# clear()
-# print("WARNING: This is NOT a profesional encrypter and was only made as practice for the developer!")
-# print("""░██╗░░░░░░░██╗███████╗██╗░░░░░░█████╗░░█████╗░███╗░░░███╗███████╗██╗██╗██╗
-# ░██║░░██╗░░██║██╔════╝██║░░░░░██╔══██╗██╔══██╗████╗░████║██╔════╝██║██║██║
-# ░╚██╗████╗██╔╝█████╗░░██║░░░░░██║░░╚═╝██║░░██║██╔████╔██║█████╗░░██║██║██║
-# ░░████╔═████║░██╔══╝░░██║░░░░░██║░░██╗██║░░██║██║╚██╔╝██║██╔══╝░░╚═╝╚═╝╚═╝
-# ░░╚██╔╝░╚██╔╝░███████╗███████╗╚█████╔╝╚█████╔╝██║░╚═╝░██║███████╗██╗██╗██╗
-# ░░░╚═╝░░░╚═╝░░╚══════╝╚══════╝░╚════╝░░╚════╝░╚═╝░░░░░╚═╝╚══════╝╚═╝╚═╝╚═╝""")
-# sprint("Welcome to Text Encrypter V3!", wait=0.2)
-print("""This program can take any text and scramble it up into a gibberish message that can be turned back into normal text with a special "key"that is stored on your computer. You can share this key with you friends too if you want them to be able to decode your message.""")
-# enter_menu()
-# Main menu loop
 menu(True)
