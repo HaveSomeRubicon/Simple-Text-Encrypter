@@ -68,10 +68,37 @@ def menu(welcome_text=False):
 
     
     # Encrypted text selector(WIP)
-    # def encrypted_text_selector(title = "Select a encrypted text: "):
-    #     clear()
-    #     sprint(title)
-        
+    def encrypted_text_selector(title = "Select a encrypted text: "):
+        clear()
+        sprint(title)
+        encrypted_texts = storage_manager.read_json()["myEncryptedText"]
+        time.sleep(0.2)
+        if encrypted_texts == []:
+            sprint("Oops! Looks like you have no encrypted texts.")
+            enter_menu()
+            menu()
+            return
+        for encrypted_text in encrypted_texts:
+            print(f'{encrypted_texts.index(encrypted_text)}. "{encrypted_text["title"]}" created on {encrypted_text["date"]}')
+            time.sleep(0.1)
+            if encrypted_text == encrypted_texts[-1]:
+                last_index = encrypted_texts.index(encrypted_text)
+        text_choice = sinput(
+            f"\nChoose a encrypted text(1-{encrypted_texts.index(encrypted_text) + 1})?: ")
+        try:
+            if not int(text_choice) < 1:
+                return encrypted_texts[int(text_choice) - 1]
+            else:
+                sprint(
+                    "Oops, that number is not a encrypted text! ERROR: Less than lowest index encrypted text")
+                enter_menu()
+                return encrypted_text_selector()
+        except:
+            sprint(
+                "Oops, that number is not a encrypted text! ERROR: Greater than highest index encrypted text")
+            enter_menu()
+            return encrypted_text_selector()
+
     # Display options
     clear()
     print("""
