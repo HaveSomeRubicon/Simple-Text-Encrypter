@@ -51,7 +51,7 @@ def menu(welcome_text=False):
             if item == ciphers[-1]:
                 last_index = ciphers.index(item)
         key_choice = sinput(
-            f"\nChoose a key(1-{ciphers.index(item) + 1})?: ")
+            f"\nChoose a key[1-{ciphers.index(item) + 1}]?: ")
         try:
             if not int(key_choice) < 1:
                 return ciphers[int(key_choice) - 1]
@@ -79,12 +79,12 @@ def menu(welcome_text=False):
             menu()
             return
         for encrypted_text in encrypted_texts:
-            print(f'{encrypted_texts.index(encrypted_text)}. "{encrypted_text["title"]}" created on {encrypted_text["date"]}')
+            print(f'{encrypted_texts.index(encrypted_text) + 1}. "{encrypted_text["title"]}" created on {encrypted_text["date"]}')
             time.sleep(0.1)
             if encrypted_text == encrypted_texts[-1]:
                 last_index = encrypted_texts.index(encrypted_text)
         text_choice = sinput(
-            f"\nChoose a encrypted text(1-{encrypted_texts.index(encrypted_text) + 1})?: ")
+            f"\nChoose a encrypted text[1-{encrypted_texts.index(encrypted_text) + 1}]?: ")
         try:
             if not int(text_choice) < 1:
                 return encrypted_texts[int(text_choice) - 1]
@@ -153,14 +153,23 @@ def menu(welcome_text=False):
             sprint("Encrypted text was succesfully saved!")
         enter_menu()
     elif menu_choice == 'D':
+        # clear()
+        # selected_cipher = cipher_tools.unsimplify_cipher(
+        #     key_selector()['cipher'])
+        # decrypted_text = encryption_tools.decrypt(sinput(
+        #     "Paste in some text that was encrypted with the same key by pressing CTRL+SHIFT+V(not CTRL+V!!!): ", speed=0.05), selected_cipher)
+        # clear()
+        # sprint("Your decrypted text: \n")
+        # sprint(decrypted_text + '\n', speed=0.01)
         clear()
-        selected_cipher = cipher_tools.unsimplify_cipher(
-            key_selector()['cipher'])
-        decrypted_text = encryption_tools.decrypt(sinput(
-            "Paste in some text that was encrypted with the same key by pressing CTRL+SHIFT+V(not CTRL+V!!!): ", speed=0.05), selected_cipher)
+        selected_cipher = cipher_tools.unsimplify_cipher(key_selector()['cipher'])
+        if sinput("Would you like to decrypt one of your (s)aved texts or would you like to (p)aste in some encrypted text[S or P]?: ").lower() == 's':
+            decrypted_text = encryption_tools.decrypt(encrypted_text_selector("What encrypted text would you like to decrypt: ")['encryptedText'], selected_cipher)
+        else:
+            decrypted_text = encryption_tools.decrypt(sinput("Make sure you have your encrypted text copied and press ctrl+shift+v(NOT ctrl+v!!!!) to paste in your encrypted text: "), selected_cipher)
         clear()
-        sprint("Your decrypted text: \n")
-        sprint(decrypted_text + '\n', speed=0.01)
+        sprint("Your decrypted text: \n", wait=0.2)
+        print(decrypted_text,'\n')
         enter_menu()
     elif menu_choice == 'M':
         clear()
