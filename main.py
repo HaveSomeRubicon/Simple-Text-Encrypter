@@ -120,6 +120,8 @@ def menu(welcome_text=False):
     time.sleep(0.1)
     print("Press K and hit <enter> to list all your keys")
     time.sleep(0.1)
+    print("Press J and hit <enter> to list all your saved texts")
+    time.sleep(0.1)
     # print("Press I and hit <enter> to import a key")
     # time.sleep(0.1)
     # print("Press X and hit <enter> to export a key")
@@ -202,6 +204,21 @@ def menu(welcome_text=False):
             time.sleep(0.1)
             if item == ciphers[-1]:
                 last_index = ciphers.index(item)
+        print('')
+        enter_menu()
+    elif menu_choice == 'J':
+        clear()
+        sprint("Your encrypted texts: ")
+        encrypted_texts = storage_manager.read_json()["myEncryptedText"]
+        time.sleep(0.2)
+        if encrypted_texts == []:
+            sprint("Oops! Looks like you have no encrypted texts.")
+            enter_menu()
+            menu()
+            return
+        for encrypted_text in encrypted_texts:
+            print(f'{encrypted_texts.index(encrypted_text) + 1}. "{encrypted_text["title"]}" created on {encrypted_text["date"]}')
+            time.sleep(0.1)
         print('')
         enter_menu()
     # elif menu_choice == 'I':
