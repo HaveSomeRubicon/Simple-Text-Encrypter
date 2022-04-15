@@ -42,14 +42,12 @@ def write_to_json(file_to_write, destination="my_stuff.json"):
     format_json()
 
 
-
 def append_cipher(title, cipher, path="my_stuff.json", date=today.strftime("%B %d, %Y")):
     json_file = read_json(path)
     json_file["ciphers"].append(
         {"title": title, "date": date, "cipher": cipher})
     write_to_json(json_file, path)
     format_json()
-
 
 
 def append_encrypted_text(title, encrypted_text, path="my_stuff.json", date=today.strftime("%B %d, %Y")):
