@@ -120,10 +120,10 @@ def menu(welcome_text=False):
     time.sleep(0.1)
     print("Press K and hit <enter> to list all your keys")
     time.sleep(0.1)
-    print("Press I and hit <enter> to import a key")
-    time.sleep(0.1)
-    print("Press X and hit <enter> to export a key")
-    time.sleep(0.1)
+    # print("Press I and hit <enter> to import a key")
+    # time.sleep(0.1)
+    # print("Press X and hit <enter> to export a key")
+    # time.sleep(0.1)
     print("Press F and hit <enter> to delete a key")
     time.sleep(0.1)
     print("Press Q and hit <enter> to quit program")
@@ -204,28 +204,28 @@ def menu(welcome_text=False):
                 last_index = ciphers.index(item)
         print('')
         enter_menu()
-    elif menu_choice == 'I':
-        clear()
-        sprint("Rename the export.txt file to import.txt and place the file in the same folder this script is in and press enter when your done.")
-        enter_menu()
-        if not os.path.isfile('import.txt'):  # Check if an import.txt file exists
-            clear()
-            sprint("The program wasn't able to find a import.txt file. Did you place it in the same folder this script is in?")
-            enter_menu()
-            menu()
-            return ''
-        try:
-            storage_manager.append_cipher(storage_manager.read_json('import.txt')['title'], storage_manager.read_json(
-                'import.txt')['cipher'], date=storage_manager.read_json('import.txt')['date'])  # Add the cipher from import.txt
-            sprint("The key was succesfully added!")
-        except:
-            sprint("The import.txt file was found but the program was not able to read it. Make sure it hasn't been tampered with.")
-        enter_menu()
-    elif menu_choice == 'X':
-        export_key = key_selector("What key would you like to export?: ")
-        storage_manager.write_to_json(export_key, "export.txt")
-        sprint("The key has been exported to the export.txt file.")
-        enter_menu()
+    # elif menu_choice == 'I':
+    #     clear()
+    #     sprint("Rename the export.txt file to import.txt and place the file in the same folder this script is in and press enter when your done.")
+    #     enter_menu()
+    #     if not os.path.isfile('import.txt'):  # Check if an import.txt file exists
+    #         clear()
+    #         sprint("The program wasn't able to find a import.txt file. Did you place it in the same folder this script is in?")
+    #         enter_menu()
+    #         menu()
+    #         return ''
+    #     try:
+    #         storage_manager.append_cipher(storage_manager.read_json('import.txt')['title'], storage_manager.read_json(
+    #             'import.txt')['cipher'], date=storage_manager.read_json('import.txt')['date'])  # Add the cipher from import.txt
+    #         sprint("The key was succesfully added!")
+    #     except:
+    #         sprint("The import.txt file was found but the program was not able to read it. Make sure it hasn't been tampered with.")
+    #     enter_menu()
+    # elif menu_choice == 'X':
+    #     export_key = key_selector("What key would you like to export?: ")
+    #     storage_manager.write_to_json(export_key, "export.txt")
+    #     sprint("The key has been exported to the export.txt file.")
+    #     enter_menu()
     elif menu_choice == 'F':
         deleted_key = key_selector("What key would you like to delete: ")
 
