@@ -150,7 +150,7 @@ def menu(welcome_text=False):
         if sinput("Would you like to save this encrypted text[Y or N]?: ", wait=0.2).lower() == 'y':
             storage_manager.append_encrypted_text(sinput(
                 "What would you like to call this encrypted text?: ", wait=0.2), encrypted_text)
-            sprint("Encrypted text was succesfully saved!")
+            sprint("Encrypted text was succesfully saved! You can decrypt it from the decrypt menu.")
         enter_menu()
     elif menu_choice == 'D':
         # clear()
