@@ -44,10 +44,17 @@ def append_encrypted_text(title, encrypted_text, path="my_stuff.json", date=toda
         {"title": title, "encryptedText": encrypted_text, 'date': date})
     write_to_json(new_json)
 
+
 def run_checks():
     try:
         with open("my_stuff.json", "r") as json_file:
-            if json_file.read() == '' or  json_file.read() == 'none':
+            if json_file.read() == '' or json_file.read() == 'none':
                 reset_json()
     except FileNotFoundError:
+        reset_json()
+
+if __name__ == "__main__":
+    input("WARNING: IF YOU ARE SEEING THIS YOU ARE MOST LIKELY RUNNING THE WRONG SCRIPT!!! PLEASE RUN main.py INSTEAD OF THIS SCRIPT")
+    input("Press enter if you are purposefully running this script and you know what your doing: ")
+    if input("Would you like to reset the json file[Y or N]?: ").lower() == 'y':
         reset_json()
