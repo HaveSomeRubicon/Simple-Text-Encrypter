@@ -120,8 +120,6 @@ def menu(welcome_text=False):
     time.sleep(0.1)
     print("Press K and hit <enter> to list all your keys")
     time.sleep(0.1)
-    print("Press J and hit <enter> to list all your saved texts")
-    time.sleep(0.1)
     # print("Press I and hit <enter> to import a key")
     # time.sleep(0.1)
     # print("Press X and hit <enter> to export a key")
@@ -149,30 +147,13 @@ def menu(welcome_text=False):
         sprint("Your encrypted text: \n", wait=0.2)
         sprint(encrypted_text + '\n', speed=0.01, wait=0.2)
         sprint("If you want to copy it higlight the encrypted text and press CTRL+SHIFT+C(not CTRL+C!!!) to copy it.", speed=0.05, wait=0.2)
-        if sinput("Would you like to save this encrypted text[Y or N]?: ", wait=0.2).lower() == 'y':
-            storage_manager.append_encrypted_text(sinput(
-                "What would you like to call this encrypted text?: ", wait=0.2), encrypted_text)
-            sprint(
-                "Encrypted text was succesfully saved! You can decrypt it from the decrypt menu.")
         enter_menu()
     elif menu_choice == 'D':
-        # clear()
-        # selected_cipher = cipher_tools.unsimplify_cipher(
-        #     key_selector()['cipher'])
-        # decrypted_text = encryption_tools.decrypt(sinput(
-        #     "Paste in some text that was encrypted with the same key by pressing CTRL+SHIFT+V(not CTRL+V!!!): ", speed=0.05), selected_cipher)
-        # clear()
-        # sprint("Your decrypted text: \n")
-        # sprint(decrypted_text + '\n', speed=0.01)
         clear()
         selected_cipher = cipher_tools.unsimplify_cipher(
             key_selector()['cipher'])
-        if sinput("Would you like to decrypt one of your (s)aved texts or would you like to (p)aste in some encrypted text[S or P]?: ").lower() == 's':
-            decrypted_text = encryption_tools.decrypt(encrypted_text_selector(
-                "What encrypted text would you like to decrypt: ")['encryptedText'], selected_cipher)
-        else:
-            decrypted_text = encryption_tools.decrypt(sinput(
-                "Make sure you have your encrypted text copied and press ctrl+shift+v(NOT ctrl+v!!!!) to paste in your encrypted text: "), selected_cipher)
+        decrypted_text = encryption_tools.decrypt(sinput(
+            "Make sure you have your encrypted text copied and press ctrl+shift+v(NOT ctrl+v!!!!) to paste in your encrypted text: "), selected_cipher)
         clear()
         sprint("Your decrypted text: \n", wait=0.2)
         print(decrypted_text, '\n')
@@ -208,22 +189,6 @@ def menu(welcome_text=False):
             time.sleep(0.1)
             if item == ciphers[-1]:
                 last_index = ciphers.index(item)
-        print('')
-        enter_menu()
-    elif menu_choice == 'J':
-        clear()
-        sprint("Your encrypted texts: ")
-        encrypted_texts = storage_manager.read_json()["myEncryptedText"]
-        time.sleep(0.2)
-        if encrypted_texts == []:
-            sprint("Oops! Looks like you have no encrypted texts.")
-            enter_menu()
-            menu()
-            return
-        for encrypted_text in encrypted_texts:
-            print(
-                f'{encrypted_texts.index(encrypted_text) + 1}. "{encrypted_text["title"]}" created on {encrypted_text["date"]}')
-            time.sleep(0.1)
         print('')
         enter_menu()
     # elif menu_choice == 'I':

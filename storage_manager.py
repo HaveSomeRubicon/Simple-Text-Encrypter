@@ -19,7 +19,7 @@ today = date.today()
 
 def reset_json(path="my_stuff.json"):
     with open(path, "w") as file:
-        file.write('{"ciphers": [], "myEncryptedText": []}')
+        file.write('{"ciphers": []}')
 
 
 def read_json(path="my_stuff.json"):
@@ -37,13 +37,6 @@ def append_cipher(title, cipher, path="my_stuff.json", date=today.strftime("%B %
     json_file["ciphers"].append(
         {"title": title, "date": date, "cipher": cipher})
     write_to_json(json_file, path)
-
-
-def append_encrypted_text(title, encrypted_text, path="my_stuff.json", date=today.strftime("%B %d, %Y")):
-    new_json = read_json()
-    new_json["myEncryptedText"].append(
-        {"title": title, "encryptedText": encrypted_text, 'date': date})
-    write_to_json(new_json)
 
 
 def run_checks():
