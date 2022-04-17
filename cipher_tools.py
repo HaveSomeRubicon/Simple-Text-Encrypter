@@ -48,39 +48,7 @@ def make_cipher(length=4):
 
 
 def simplify_cipher(cipher):
-    main_key_raw = cipher[0]
-    spices_raw = cipher[1]
-    length = cipher[2]
-
-    # main_key_raw -> string
-    main_key_string = ""
-    for item in main_key_raw:
-        main_key_string += item
-
-    # main_key_string -> hex
-    main_key_hex_list = []
-    for char in main_key_string:
-        char_int = chars.index(char)
-        # copied from https://stackoverflow.com/a/12638477
-        char_hex = (f"{char_int:#0{5}x}"[2:])
-        main_key_hex_list.append(char_hex)
-    main_key_hex = ':'.join(main_key_hex_list)
-
-    # spice -> string
-    spice_string = ""
-    for item in spices_raw:
-        spice_string += item
-
-    # spice_string -> hex
-    spice_hex_list = []
-    for char in spice_string:
-        char_int = chars.index(char)
-        # copied from https://stackoverflow.com/a/12638477
-        char_hex = (f"{char_int:#0{5}x}"[2:])
-        spice_hex_list.append(char_hex)
-    spice_hex = ":".join(spice_hex_list)
-
-    return f"{main_key_hex};{spice_hex};{length}"
+    return f"{':'.join([hex(chars.index(char))[2:] for char in ''.join(cipher[0])])};{':'.join([hex(chars.index(char))[2:] for char in ''.join(cipher[1])])};{cipher[2]}"
 
 
 def unsimplify_cipher(cipher):
@@ -126,3 +94,8 @@ def unsimplify_cipher(cipher):
 
     # return normal cipher
     return [main_key, spice, length]
+
+
+random_keys = make_cipher()
+print(unsimplify_cipher(simplify_cipher(random_keys)) == random_keys)
+# print(simplify_cipher(random_keys))
