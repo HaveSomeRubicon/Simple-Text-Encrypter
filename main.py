@@ -1,20 +1,16 @@
 import time
-import encrypter
-import cipher_storage
-import cipher_utils
+import encryption_tools
+import storage_manager
+import cipher_tools
 import os
 import json
 import subprocess
 
-# Check if cipher.json is empty
-try:
-    with open("cipher.json", "r") as json_file:
-        if json_file.read() == '':
-            cipher_storage.reset_json()
-except FileNotFoundError:
-    cipher_storage.reset_json()
+# Run checks to see if json files are empty or dont exist
+storage_manager.run_checks()
 
 
+# Define menu functions
 def clear(): return subprocess.run(['cls' if os.name == 'nt' else 'clear'])
 
 
@@ -26,17 +22,21 @@ def sprint(text, speed=0.06, wait=0, end='\n'):
     print('', end=end)
 
 
+def sinput(text, speed=0.06, wait=0, end='\n'):
+    sprint(text, speed, wait, end='')
+    return input("")
+
+
 def enter_menu():
-    sprint("Press <enter> to continue", end='')
-    input("")
+    sinput("Press <enter> to continue")
 
 
-def menu():
+def menu(welcome_text=False):
     # Key selector function
     def key_selector(title="Select a key: "):
         clear()
         sprint(title)
-        ciphers = cipher_storage.read_ciphers()['ciphers']
+        ciphers = storage_manager.read_json()['ciphers']
         time.sleep(0.2)
         if ciphers == []:
             print(
@@ -50,8 +50,8 @@ def menu():
             time.sleep(0.1)
             if item == ciphers[-1]:
                 last_index = ciphers.index(item)
-        key_choice = input(
-            f"\nChoose a key(1-{ciphers.index(item) + 1})?: ")
+        key_choice = sinput(
+            f"\nChoose a key[1-{ciphers.index(item) + 1}]?: ")
         try:
             if not int(key_choice) < 1:
                 return ciphers[int(key_choice) - 1]
@@ -66,6 +66,39 @@ def menu():
             enter_menu()
             return key_selector()
 
+    # Encrypted text selector
+    def encrypted_text_selector(title="Select a encrypted text: "):
+        clear()
+        sprint(title)
+        encrypted_texts = storage_manager.read_json()["myEncryptedText"]
+        time.sleep(0.2)
+        if encrypted_texts == []:
+            sprint("Oops! Looks like you have no encrypted texts.")
+            enter_menu()
+            menu()
+            return
+        for encrypted_text in encrypted_texts:
+            print(
+                f'{encrypted_texts.index(encrypted_text) + 1}. "{encrypted_text["title"]}" created on {encrypted_text["date"]}')
+            time.sleep(0.1)
+            if encrypted_text == encrypted_texts[-1]:
+                last_index = encrypted_texts.index(encrypted_text)
+        text_choice = sinput(
+            f"\nChoose a encrypted text[1-{encrypted_texts.index(encrypted_text) + 1}]?: ")
+        try:
+            if not int(text_choice) < 1:
+                return encrypted_texts[int(text_choice) - 1]
+            else:
+                sprint(
+                    "Oops, that number is not a encrypted text! ERROR: Less than lowest index encrypted text")
+                enter_menu()
+                return encrypted_text_selector()
+        except:
+            sprint(
+                "Oops, that number is not a encrypted text! ERROR: Greater than highest index encrypted text")
+            enter_menu()
+            return encrypted_text_selector()
+
     # Display options
     clear()
     print("""
@@ -75,6 +108,9 @@ def menu():
 ║║║║║║╔╗╠╣╔╗╗║╚╝║║═╣╔╗╣║║╠╝
 ║║║║║║╔╗║║║║║║║║║║═╣║║║╚╝╠╗
 ╚╝╚╝╚╩╝╚╩╩╝╚╝╚╩╩╩══╩╝╚╩══╩╝""")
+    if welcome_text:
+        print("""Welcome to Simple-Text-Encrypter V3, this program can take any text and scramble it up into a gibberish message that can be turned backinto normal text with a special "key" that is stored on your computer. You can share this key with you friends too if you want them to be able to decode your message.""")
+        print("-------------------------------------------------------------------")
     time.sleep(0.1)
     print("Press E and hit <enter> to encrypt text")
     time.sleep(0.1)
@@ -84,10 +120,10 @@ def menu():
     time.sleep(0.1)
     print("Press K and hit <enter> to list all your keys")
     time.sleep(0.1)
-    print("Press I and hit <enter> to import a key")
-    time.sleep(0.1)
-    print("Press X and hit <enter> to export a key")
-    time.sleep(0.1)
+    # print("Press I and hit <enter> to import a key")
+    # time.sleep(0.1)
+    # print("Press X and hit <enter> to export a key")
+    # time.sleep(0.1)
     print("Press F and hit <enter> to delete a key")
     time.sleep(0.1)
     print("Press Q and hit <enter> to quit program")
@@ -103,23 +139,24 @@ def menu():
         return ''
     if menu_choice == 'E':
         clear()
-        # Let the user choose a key and convert it to raw format
-        cipher = cipher_utils.unsimplify_cipher(key_selector()['cipher'])
-        text_input = input("What text would you like to encrypt?:\n")
+        selected_cipher = cipher_tools.unsimplify_cipher(
+            key_selector()['cipher'])
+        encrypted_text = encryption_tools.encrypt(
+            sinput("What text would you like to encrypt?: "), selected_cipher)
         clear()
-        sprint("Your encrypted text: \n")
-        sprint(encrypter.encrypt(text_input, cipher), speed=0.01)  # Encrypt
-        print('')
+        sprint("Your encrypted text: \n", wait=0.2)
+        sprint(encrypted_text + '\n', speed=0.01, wait=0.2)
+        sprint("If you want to copy it higlight the encrypted text and press CTRL+SHIFT+C(not CTRL+C!!!) to copy it.", speed=0.05, wait=0.2)
         enter_menu()
     elif menu_choice == 'D':
         clear()
-        # Let the user choose a key and convert it to raw format
-        cipher = cipher_utils.unsimplify_cipher(key_selector()['cipher'])
-        text_input = input("What text would you like to decrypt?:\n")
+        selected_cipher = cipher_tools.unsimplify_cipher(
+            key_selector()['cipher'])
+        decrypted_text = encryption_tools.decrypt(sinput(
+            "Make sure you have your encrypted text copied and press ctrl+shift+v(NOT ctrl+v!!!!) to paste in your encrypted text: "), selected_cipher)
         clear()
-        sprint("Your decrypted text: \n")
-        sprint(encrypter.decrypt(text_input, cipher), speed=0.01)  # Decrypt
-        print('')
+        sprint("Your decrypted text: \n", wait=0.2)
+        print(decrypted_text, '\n')
         enter_menu()
     elif menu_choice == 'M':
         clear()
@@ -130,15 +167,15 @@ def menu():
             if title_input == '':
                 sprint("Please give you key a name!")
                 clear()
-        cipher_storage.append_cipher_to_ciphers(
-            title_input, cipher_utils.simplify_cipher(cipher_utils.make_cipher()))
+        storage_manager.append_cipher(
+            title_input, cipher_tools.simplify_cipher(cipher_tools.make_cipher()))
         sprint(
             "New key was succesfully made! You may now use this key to encrypt and decrypt text!")
         enter_menu()
     elif menu_choice == 'K':
         clear()
         sprint("Your keys:")
-        ciphers = cipher_storage.read_ciphers()['ciphers']
+        ciphers = storage_manager.read_json()['ciphers']
         time.sleep(0.2)
         if ciphers == []:
             print(
@@ -154,28 +191,28 @@ def menu():
                 last_index = ciphers.index(item)
         print('')
         enter_menu()
-    elif menu_choice == 'I':
-        clear()
-        sprint("Rename the export.txt file to import.txt and place the file in the same folder this script is in and press enter when your done.")
-        enter_menu()
-        if not os.path.isfile('import.txt'):  # Check if an import.txt file exists
-            clear()
-            sprint("The program wasn't able to find a import.txt file. Did you place it in the same folder this script is in?")
-            enter_menu()
-            menu()
-            return ''
-        try:
-            cipher_storage.append_cipher_to_ciphers(cipher_storage.read_ciphers('import.txt')['title'], cipher_storage.read_ciphers(
-                'import.txt')['cipher'], date=cipher_storage.read_ciphers('import.txt')['date'])  # Add the cipher from import.txt
-            sprint("The key was succesfully added!")
-        except:
-            sprint("The import.txt file was found but the program was not able to read it. Make sure it hasn't been tampered with.")
-        enter_menu()
-    elif menu_choice == 'X':
-        export_key = key_selector("What key would you like to export?: ")
-        cipher_storage.write_to_ciphers(export_key, "export.txt")
-        sprint("The key has been exported to the export.txt file.")
-        enter_menu()
+    # elif menu_choice == 'I':
+    #     clear()
+    #     sprint("Rename the export.txt file to import.txt and place the file in the same folder this script is in and press enter when your done.")
+    #     enter_menu()
+    #     if not os.path.isfile('import.txt'):  # Check if an import.txt file exists
+    #         clear()
+    #         sprint("The program wasn't able to find a import.txt file. Did you place it in the same folder this script is in?")
+    #         enter_menu()
+    #         menu()
+    #         return ''
+    #     try:
+    #         storage_manager.append_cipher(storage_manager.read_json('import.txt')['title'], storage_manager.read_json(
+    #             'import.txt')['cipher'], date=storage_manager.read_json('import.txt')['date'])  # Add the cipher from import.txt
+    #         sprint("The key was succesfully added!")
+    #     except:
+    #         sprint("The import.txt file was found but the program was not able to read it. Make sure it hasn't been tampered with.")
+    #     enter_menu()
+    # elif menu_choice == 'X':
+    #     export_key = key_selector("What key would you like to export?: ")
+    #     storage_manager.write_to_json(export_key, "export.txt")
+    #     sprint("The key has been exported to the export.txt file.")
+    #     enter_menu()
     elif menu_choice == 'F':
         deleted_key = key_selector("What key would you like to delete: ")
 
@@ -192,29 +229,18 @@ def menu():
         else:
             menu()
             return ''
-        json_file = cipher_storage.read_ciphers()
+        json_file = storage_manager.read_json()
         json_file['ciphers'].remove(deleted_key)
-        cipher_storage.write_to_ciphers(json_file)
+        storage_manager.write_to_json(json_file)
         sprint("The key was succesfully deleted.")
         enter_menu()
     elif menu_choice == 'Q':
         clear()
         quit()
+    else:
+        sprint("That option does not exist!")
+        enter_menu()
     menu()
 
 
-# Welcome screen:
-# clear()
-# print("WARNING: This is NOT a profesional encrypter and was only made as practice for the developer!")
-# print("""░██╗░░░░░░░██╗███████╗██╗░░░░░░█████╗░░█████╗░███╗░░░███╗███████╗██╗██╗██╗
-# ░██║░░██╗░░██║██╔════╝██║░░░░░██╔══██╗██╔══██╗████╗░████║██╔════╝██║██║██║
-# ░╚██╗████╗██╔╝█████╗░░██║░░░░░██║░░╚═╝██║░░██║██╔████╔██║█████╗░░██║██║██║
-# ░░████╔═████║░██╔══╝░░██║░░░░░██║░░██╗██║░░██║██║╚██╔╝██║██╔══╝░░╚═╝╚═╝╚═╝
-# ░░╚██╔╝░╚██╔╝░███████╗███████╗╚█████╔╝╚█████╔╝██║░╚═╝░██║███████╗██╗██╗██╗
-# ░░░╚═╝░░░╚═╝░░╚══════╝╚══════╝░╚════╝░░╚════╝░╚═╝░░░░░╚═╝╚══════╝╚═╝╚═╝╚═╝""")
-# sprint("Welcome to Text Encrypter V3!", wait=0.2)
-# sprint("""This program can take any text and scramble it up into a gibberish message that can be turned back into normal text with a special "key"
-# that is stored on your computer. You can share this key with you friends too if you want them to be able to decode your message.""", wait=0.2)
-# enter_menu()
-# Main menu loop
-menu()
+menu(True)
