@@ -48,81 +48,56 @@ def make_cipher(length=4):
 
 
 def simplify_cipher(cipher):
-    main_key_raw = cipher[0]
-    spices_raw = cipher[1]
-    length = cipher[2]
-
-    # main_key_raw -> string
-    main_key_string = ""
-    for item in main_key_raw:
-        main_key_string += item
-
-    # main_key_string -> hex
-    main_key_hex_list = []
-    for char in main_key_string:
-        char_int = chars.index(char)
-        # copied from https://stackoverflow.com/a/12638477
-        char_hex = (f"{char_int:#0{5}x}"[2:])
-        main_key_hex_list.append(char_hex)
-    main_key_hex = ':'.join(main_key_hex_list)
-
-    # spice -> string
-    spice_string = ""
-    for item in spices_raw:
-        spice_string += item
-
-    # spice_string -> hex
-    spice_hex_list = []
-    for char in spice_string:
-        char_int = chars.index(char)
-        # copied from https://stackoverflow.com/a/12638477
-        char_hex = (f"{char_int:#0{5}x}"[2:])
-        spice_hex_list.append(char_hex)
-    spice_hex = ":".join(spice_hex_list)
-
-    return f"{main_key_hex};{spice_hex};{length}"
+    return f"{':'.join([hex(chars.index(char))[2:] for char in ''.join(cipher[0])])};{':'.join([hex(chars.index(char))[2:] for char in ''.join(cipher[1])])};{cipher[2]}"
 
 
 def unsimplify_cipher(cipher):
-    length = int(cipher[-1])
-    # Function to find all indexes of a character in a string
+    # length = int(cipher[-1])
+    # # Function to find all indexes of a character in a string
 
-    def find_index(string, char):
-        output = []
-        for char_index, str_char in enumerate(string):
-            if str_char == char:
-                output.append(char_index)
-        return tuple(output)
+    # def find_index(string, char):
+    #     output = []
+    #     for char_index, str_char in enumerate(string):
+    #         if str_char == char:
+    #             output.append(char_index)
+    #     return tuple(output)
 
-    # Find the index of the semi colon in the cipher
-    semicolon_indexes = find_index(cipher, ";")
+    # # Find the index of the semi colon in the cipher
+    # semicolon_indexes = find_index(cipher, ";")
 
-    # Extract the main key
-    main_key_hex_list = cipher[:semicolon_indexes[0]].split(":")
+    # # Extract the main key
+    # main_key_hex_list = cipher[:semicolon_indexes[0]].split(":")
 
-    main_key_int_list = []
-    for each_hex in main_key_hex_list:
-        main_key_int_list.append(int(each_hex, 16))
+    # main_key_int_list = []
+    # for each_hex in main_key_hex_list:
+    #     main_key_int_list.append(int(each_hex, 16))
 
-    main_key_string = ""
-    for item in main_key_int_list:
-        main_key_string += chars[item]
-    main_key = [main_key_string[i:i+length]
-                for i in range(0, len(main_key_string), length)]
+    # main_key_string = ""
+    # for item in main_key_int_list:
+    #     main_key_string += chars[item]
+    # main_key = [main_key_string[i:i+length]
+    #             for i in range(0, len(main_key_string), length)]
 
-    # Extract spice
-    spice_hex_list = cipher[semicolon_indexes[0] +
-                            1:semicolon_indexes[1]].split(":")
+    # # Extract spice
+    # spice_hex_list = cipher[semicolon_indexes[0] +
+    #                         1:semicolon_indexes[1]].split(":")
 
-    spice_int_list = []
-    for each_hex in spice_hex_list:
-        spice_int_list.append(int(each_hex, 16))
+    # spice_int_list = []
+    # for each_hex in spice_hex_list:
+    #     spice_int_list.append(int(each_hex, 16))
 
-    spice_string = ""
-    for item in spice_int_list:
-        spice_string += chars[item]
-    spice = [spice_string[i:i+length]
-             for i in range(0, len(spice_string), length)]
+    # spice_string = ""
+    # for item in spice_int_list:
+    #     spice_string += chars[item]
+    # spice = [''.join([chars[int(item, 16)] for item in cipher.split(';')[0].split(':')])[i:i+length] for i in range(0, len(''.join([chars[int(item, 16)] for item in cipher.split(';')[0].split(':')])), cipher[2])]
+    # spice = [''.join([chars[int(item, 16)] for item in cipher.split(';')[1].split(':')])[i:i+length] for i in range(0, len(''.join([chars[int(item, 16)] for item in cipher.split(';')[0].split(':')])), cipher[2])]
 
-    # return normal cipher
-    return [main_key, spice, length]
+    # # return normal cipher
+    # return [main_key, spice, length]
+    # , [''.join([chars[int(item, 16)] for item in cipher.split(';')[1].split(':')])[i:i+cipher[2]] for i in range(0, len(''.join([chars[int(item, 16)] for item in cipher.split(';')[0].split(':')])), cipher[2])], cipher[2]]
+    
+
+
+    
+    # Non spaghetti code version is commented out above
+    return [[''.join([chars[int(item, 16)] for item in cipher.split(';')[0].split(':')])[i:i+int(cipher.split(';')[2])] for i in range(0, len(''.join([chars[int(item, 16)] for item in cipher.split(';')[0].split(':')])), int(cipher.split(';')[2]))], [''.join([chars[int(item, 16)] for item in cipher.split(';')[1].split(':')])[i:i+int(cipher.split(';')[2])] for i in range(0, len(''.join([chars[int(item, 16)] for item in cipher.split(';')[1].split(':')])), int(cipher.split(';')[2]))], int(cipher.split(';')[2])]
