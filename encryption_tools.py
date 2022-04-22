@@ -16,37 +16,7 @@ chars_no_space = [item for item in chars if not item == " "]
 
 
 def encrypt(text, cipher):
-    main_key_raw = cipher[0]
-    spices = cipher[1]
-    length = cipher[2]
-
-    # Make main key dictionary
-    main_key = {}
-    for key in main_key_raw:
-        main_key[chars[main_key_raw.index(key)]] = key
-
-    # Encrypt the text
-    encrypted = ""
-    for char in text:
-        if random.randint(1, 3) == 1:
-            encrypted = encrypted + random.choice(spices)
-            if random.randint(1, 3) == 1:
-                encrypted = encrypted + random.choice(spices)
-                if random.randint(1, 3) == 1:
-                    encrypted = encrypted + random.choice(spices)
-        try:
-            encrypted = encrypted + main_key[char]
-        except KeyError:
-            print(
-                f"EEROR: Unsupported character '{char}', the character will be skipped.")
-    if random.randint(1, 3) == 1:
-        encrypted = encrypted + random.choice(spices)
-        if random.randint(1, 3) == 1:
-            encrypted = encrypted + random.choice(spices)
-            if random.randint(1, 3) == 1:
-                encrypted = encrypted + random.choice(spices)
-
-    return encrypted
+    return ''.join([{chars[cipher[0].index(item)]: item for item in cipher[0]}[char] + ('' if random.randint(0, 3) == 0 else random.choice(cipher[1]) + ('' if random.randint(0, 3) == 0 else random.choice(cipher[1]) + ('' if random.randint(0, 3) == 0 else random.choice(cipher[1])))) for char in text])
 
 
 def decrypt(encrypted, cipher):
@@ -79,3 +49,4 @@ def decrypt(encrypted, cipher):
             spice_counter += 1
 
     return decrypted
+
