@@ -98,10 +98,25 @@ def decrypt_menu():
     submit_button.grid(row=2, column=2, ipadx=47, sticky='w')
 
 
+def list_keys():
+    main_menu()
+    title_widget = tk.Label(
+        root,
+        text='Your keys: ',
+        wraplength=200,
+        font=('Arial', 20))
+    title_widget.grid(row=0, column=1, sticky='w')
+
+    for index, key in enumerate(st.read_json()['ciphers']):
+        listed_key = tk.Button(root, text=key['title'], font=(
+            'Arial', 20), width=30, anchor='w')
+        listed_key.grid(row=index + 1, column=1)
+
+
 def main_menu():
     destroy_widgets()
     options = (("Encrypt", encrypt_menu), ("Decrypt", decrypt_menu),
-               ("List Keys", None), ("Make key", None), ('Delete Key', None))
+               ("List Keys", list_keys), ("Make key", None), ('Delete Key', None))
     for button in options:
         menu_button = tk.Button(root, text=button[0], font=(
             'Arial', 20), width=10, command=button[1])
