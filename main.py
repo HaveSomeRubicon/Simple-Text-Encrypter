@@ -2,11 +2,9 @@ import time
 import encryption_tools
 import storage_manager as st
 import cipher_tools
-import os
-import json
-import subprocess
 import tkinter as tk
 selected_key = None
+st.run_checks()
 
 root = tk.Tk()
 
@@ -20,6 +18,9 @@ def key_selector(title_text='Select a key to use: '):
     global selected_key
     selected_key = None
     selected_key_index = tk.IntVar()
+
+    if st.read_json()['ciphers'] == []:
+        return 'no ciphers'
 
     title_widget = tk.Label(root, text=title_text, wraplength=200, font=(
         'Arial', 15))
@@ -38,7 +39,16 @@ def key_selector(title_text='Select a key to use: '):
 
 def encrypt_menu():
     main_menu()
-    key_selector()
+    if key_selector() == 'no ciphers':
+        tk.Label(root, text='Oops! Looks like you have no keys yet. Please select the "Make Key" option.',
+                 wraplength=280, font=('Arial', 15)).grid(row=0, column=1)
+        alright = tk.IntVar()
+        alright_button = tk.Button(
+            root, text="Alright", font=('Arial', 20), command=lambda: alright.set(1))
+        alright_button.grid(row=1, column=1)
+        alright_button.wait_variable(alright)
+        main_menu()
+        return
     title_widget = tk.Label(
         root,
         text='Type in some text that you want to encrypt: ',
@@ -69,7 +79,16 @@ def encrypt_menu():
 
 def decrypt_menu():
     main_menu()
-    key_selector()
+    if key_selector() == 'no ciphers':
+        tk.Label(root, text='Oops! Looks like you have no keys yet. Please select the "Make Key" option.',
+                 wraplength=280, font=('Arial', 15)).grid(row=0, column=1)
+        alright = tk.IntVar()
+        alright_button = tk.Button(
+            root, text="Alright", font=('Arial', 20), command=lambda: alright.set(1))
+        alright_button.grid(row=1, column=1)
+        alright_button.wait_variable(alright)
+        main_menu()
+        return
     title_widget = tk.Label(
         root,
         text='Type in some text that you want to decrypt: ',
@@ -100,6 +119,16 @@ def decrypt_menu():
 
 def list_keys():
     main_menu()
+    if st.read_json()['ciphers'] == []:
+        tk.Label(root, text='Oops! Looks like you have no keys yet. Please select the "Make Key" option.',
+                 wraplength=280, font=('Arial', 15)).grid(row=0, column=1)
+        alright = tk.IntVar()
+        alright_button = tk.Button(
+            root, text="Alright", font=('Arial', 20), command=lambda: alright.set(1))
+        alright_button.grid(row=1, column=1)
+        alright_button.wait_variable(alright)
+        main_menu()
+        return main_menu()
     title_widget = tk.Label(
         root,
         text='Your keys: ',
@@ -113,10 +142,35 @@ def list_keys():
         listed_key.grid(row=index + 1, column=1)
 
 
+def make_key():
+    main_menu()
+    title_widget = tk.Label(
+        root,
+        text='What would you like to call this new key: ',
+        wraplength=200,
+        font=('Arial', 15))
+    title_entry = tk.Entry(root)
+    clicked = tk.IntVar()
+
+    def submit():
+        clicked.set(1)
+        st.append_cipher(title_entry.get(), cipher_tools.simplify_cipher(
+            cipher_tools.make_cipher()))
+    submit_button = tk.Button(root, text='Create key', font=(
+        'Arial', 20), width=10, command=submit)
+
+    title_widget.grid(row=0, column=1)
+    title_entry.grid(row=1, column=1, ipadx=40, ipady=10)
+    submit_button.grid(row=2, column=1)
+
+    submit_button.wait_variable(clicked)
+    list_keys()
+
+
 def main_menu():
     destroy_widgets()
     options = (("Encrypt", encrypt_menu), ("Decrypt", decrypt_menu),
-               ("List Keys", list_keys), ("Make key", None), ('Delete Key', None))
+               ("List Keys", list_keys), ("Make key", make_key), ('Delete Key', None))
     for button in options:
         menu_button = tk.Button(root, text=button[0], font=(
             'Arial', 20), width=10, command=button[1])
