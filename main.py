@@ -53,11 +53,42 @@ def encrypt_menu():
             wraplength=200,
             font=('Arial', 15))
 
-        encrypted_text = tk.Text(root, height=30, width=40, pady=0)
+        encrypted_text = tk.Text(root, wrap=tk.CHAR, width=40)
         encrypted_text.insert(tk.END, encryption_tools.encrypt(
             text_entry.get(), cipher_tools.unsimplify_cipher(selected_key['cipher'])))
-        
-        encrypted_text.grid(row=4, column=2, sticky='w', rowspan=8)
+
+        encrypted_text.grid(row=4, column=2, sticky='w')
+        title_widget.grid(row=3, column=2, sticky='w')
+    submit_button = tk.Button(
+        root, text="Done", font=('Arial', 20), command=submit)
+
+    title_widget.grid(row=0, column=2, sticky='w')
+    text_entry.grid(row=1, column=2, ipady=8, ipadx=22, sticky='w')
+    submit_button.grid(row=2, column=2, ipadx=47, sticky='w')
+
+
+def decrypt_menu():
+    main_menu()
+    key_selector()
+    title_widget = tk.Label(
+        root,
+        text='Type in some text that you want to decrypt: ',
+        wraplength=200,
+        font=('Arial', 15))
+    text_entry = tk.Entry(root)
+
+    def submit():
+        title_widget = tk.Label(
+            root,
+            text='Your decrypted text: ',
+            wraplength=200,
+            font=('Arial', 15))
+
+        encrypted_text = tk.Text(root, wrap=tk.CHAR, width=40)
+        encrypted_text.insert(tk.END, encryption_tools.decrypt(
+            text_entry.get(), cipher_tools.unsimplify_cipher(selected_key['cipher'])))
+
+        encrypted_text.grid(row=4, column=2, sticky='w')
         title_widget.grid(row=3, column=2, sticky='w')
     submit_button = tk.Button(
         root, text="Done", font=('Arial', 20), command=submit)
@@ -69,15 +100,16 @@ def encrypt_menu():
 
 def main_menu():
     destroy_widgets()
-    options = (("Encrypt", encrypt_menu), ("Decrypt", None),
-               ("List Keys", None), ("Make key", None))
+    options = (("Encrypt", encrypt_menu), ("Decrypt", decrypt_menu),
+               ("List Keys", None), ("Make key", None), ('Delete Key', None))
     for button in options:
         menu_button = tk.Button(root, text=button[0], font=(
             'Arial', 20), width=10, command=button[1])
         if(options.index(button) != 0):
-            menu_button.grid(row=options.index(button), padx=5)
+            menu_button.grid(row=options.index(button), padx=5, sticky='nw')
         else:
-            menu_button.grid(row=options.index(button), padx=5, pady=(5, 0))
+            menu_button.grid(row=options.index(button),
+                             padx=5, pady=(5, 0), sticky='nw')
 
 
 main_menu()
