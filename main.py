@@ -1,4 +1,3 @@
-from msilib.schema import RadioButton
 import time
 import encryption_tools
 import storage_manager as st
@@ -23,10 +22,10 @@ def key_selector(title_text = 'Select a key to use: '):
         text='Type in some text that you want to encrypt: ', 
         wraplength=200,
         font=('Arial', 15))
-    w = tk.RadioButton(root, text='Hello!')
+    wins = tk.RadioButton(root, text='Hello!')
     
     title_widget.grid(row=0, column=1)
-    w.grid(row=1, column=2)
+    wins.grid(row=1, column=2)
     
     
 def encrypt_menu():
