@@ -6,45 +6,65 @@ import os
 import json
 import subprocess
 import tkinter as tk
+selected_key = None
 
 root = tk.Tk()
-
-# Define main menu functions
 
 
 def destroy_widgets():
     for widget in root.winfo_children():
         widget.destroy()
 
-def key_selector(title_text = 'Select a key to use: '):
+
+def key_selector(title_text='Select a key to use: '):
+    global selected_key
+    selected_key = None
+    selected_key_index = tk.IntVar()
+
+    title_widget = tk.Label(root, text=title_text, wraplength=200, font=(
+        'Arial', 15))
+    title_widget.grid(row=0, column=1, sticky='w')
+
+    def submit_key():
+        global selected_key
+        selected_key = st.read_json()['ciphers'][selected_key_index.get()]
+
+    for index, key in enumerate(st.read_json()['ciphers']):
+        key_button = tk.Radiobutton(root, text=key['title'], font=(
+            'Arial', 15), variable=selected_key_index, value=index, justify=tk.LEFT, command=submit_key)
+        key_button.grid(row=(index + 1), column=1, ipady=7, sticky='nw')
+    key_button.wait_variable(selected_key_index)
+
+
+def encrypt_menu():
+    main_menu()
+    key_selector()
     title_widget = tk.Label(
-        root, 
-        text='Type in some text that you want to encrypt: ', 
+        root,
+        text='Type in some text that you want to encrypt: ',
         wraplength=200,
         font=('Arial', 15))
-    wins = tk.RadioButton(root, text='Hello!')
-    
-    title_widget.grid(row=0, column=1)
-    wins.grid(row=1, column=2)
-    
-    
-def encrypt_menu():
-    key_selector()
-    # title_widget = tk.Label(
-    #     root, 
-    #     text='Type in some text that you want to encrypt: ', 
-    #     wraplength=200,
-    #     font=('Arial', 15))
-    # text_entry = tk.Entry(root)
-    # def submit(): 
-    #     encrypted_text = tk.Text(encryption_tools.encrypt(text_entry.get()))
-    #     encrypted_text.grid(row=3,column=1)
-    # submit_button = tk.Button(root, text="Done", font=('Arial', 20), command=submit)
-    
-    
-    # title_widget.grid(row=0, column=1, sticky='w')
-    # text_entry.grid(row=1, column=1, ipady=8, ipadx=22, sticky='w')
-    # submit_button.grid(row=2, column=1, ipadx=47, sticky='w')
+    text_entry = tk.Entry(root)
+
+    def submit():
+        title_widget = tk.Label(
+            root,
+            text='Your encrypted text: ',
+            wraplength=200,
+            font=('Arial', 15))
+
+        encrypted_text = tk.Text(root, height=30, width=40, pady=0)
+        encrypted_text.insert(tk.END, encryption_tools.encrypt(
+            text_entry.get(), cipher_tools.unsimplify_cipher(selected_key['cipher'])))
+        
+        encrypted_text.grid(row=4, column=2, sticky='w', rowspan=8)
+        title_widget.grid(row=3, column=2, sticky='w')
+    submit_button = tk.Button(
+        root, text="Done", font=('Arial', 20), command=submit)
+
+    title_widget.grid(row=0, column=2, sticky='w')
+    text_entry.grid(row=1, column=2, ipady=8, ipadx=22, sticky='w')
+    submit_button.grid(row=2, column=2, ipadx=47, sticky='w')
 
 
 def main_menu():
