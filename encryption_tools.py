@@ -16,7 +16,7 @@ chars_no_space = [item for item in chars if not item == " "]
 
 
 def encrypt(text, cipher):
-    return ''.join([{chars[cipher[0].index(item)]: item for item in cipher[0]}[char] + ('' if random.randint(0, 3) != 0 else random.choice(cipher[1]) + ('' if random.randint(0, 3) != 0 else random.choice(cipher[1]) + ('' if random.randint(0, 3) != 0 else random.choice(cipher[1])))) for char in text])
+    return ''.join([{chars[cipher[0].index(item)]: item for item in cipher[0]}[char] + ('' if random.randint(0, 3) == 0 else random.choice(cipher[1]) + ('' if random.randint(0, 3) == 0 else random.choice(cipher[1]) + ('' if random.randint(0, 3) == 0 else random.choice(cipher[1])))) for char in text])
 
 
 def decrypt(encrypted, cipher):
