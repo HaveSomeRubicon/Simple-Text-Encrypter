@@ -1,7 +1,3 @@
-Text-Encrypter.code-workspace
-export.txt
-import.txt
-my_stuff.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
